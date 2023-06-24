@@ -4,7 +4,6 @@
 export interface CreateTodoRequest {
   name: string;
   dueDate: string;
-  attachmentUrl?: string;
 }
 
 export interface CreateTodoPayload extends CreateTodoRequest {
@@ -12,4 +11,5 @@ export interface CreateTodoPayload extends CreateTodoRequest {
   done: boolean;
   todoId: string;
   createdAt: string;
+  attachmentUrl: string;
 }

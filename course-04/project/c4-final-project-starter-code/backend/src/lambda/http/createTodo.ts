@@ -8,6 +8,8 @@ import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { getUserId } from '../utils';
 import { createTodo } from '../../businessLogic/todos'
 
+const bucketName = process.env.ATTACHMENT_S3_BUCKET
+
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const parsedBody: CreateTodoRequest = JSON.parse(event.body)
@@ -21,6 +23,7 @@ export const handler = middy(
       userId: getUserId(event),
       done: false,
       createdAt: createdAt,
+      attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${todoId}`,
       ...parsedBody
     }
 
