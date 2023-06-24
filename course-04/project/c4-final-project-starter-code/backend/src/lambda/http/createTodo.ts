@@ -14,11 +14,13 @@ export const handler = middy(
     
     // TODO: Implement creating a new TODO item
     const todoId = uuid.v4()
+    const createdAt = Date.now().toString()
   
     const payload = {
       todoId: todoId,
       userId: getUserId(event),
       done: false,
+      createdAt: createdAt,
       ...parsedBody
     }
 

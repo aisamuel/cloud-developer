@@ -17,7 +17,7 @@ export const handler = middy(
       return {
         statusCode: 404,
         body: JSON.stringify({
-          error: 'Group does not exist'
+          error: 'Todo does not exist'
         })
       }
     }

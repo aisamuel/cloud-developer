@@ -9,4 +9,7 @@ export interface CreateTodoRequest {
 
 export interface CreateTodoPayload extends CreateTodoRequest {
   userId: string;
+  done: boolean;
+  todoId: string;
+  createdAt: string;
 }

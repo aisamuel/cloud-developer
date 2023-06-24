@@ -15,17 +15,25 @@ const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 const todosCreatedAtIndex = process.env.TODOS_CREATED_AT_INDEX
 
 export async function getTodosForUser(userId: string) {
-  const result = await docClient.query({
-    TableName: todosTable,
-    IndexName : todosCreatedAtIndex,
-    KeyConditionExpression: 'userId = :userId',
-    ExpressionAttributeValues: {
-      ':userId': userId
-    },
-    ScanIndexForward: false
-  }).promise()
+  try {
+    const result = await docClient.query({
+      TableName: todosTable,
+      IndexName : todosCreatedAtIndex,
+      KeyConditionExpression: 'userId = :userId',
+      ExpressionAttributeValues: {
+        ':userId': userId
+      },
+      ScanIndexForward: false
+    }).promise()
 
-  return result.Items
+    return result.Items
+
+  }
+  catch (err) {
+      console.error(`Get Todo:`, err);
+      return {"error":err}
+    }
+
 }
 
 
@@ -40,6 +48,7 @@ export async function createTodo(newItem: CreateTodoPayload) {
   }
   catch (err) {
     console.error(`Creating Todo:`, err);
+    return {"error":err}
   }
 }
 
@@ -53,7 +62,8 @@ export async function updateTodo(todoId: string, userId: string, updatedItem: Up
         "todoId": todoId,
         "userId": userId
       },
-      UpdateExpression: "set #name = :name, #dueDate = :dueDate, #done = :done",
+      ExpressionAttributeNames: {"#N": "name"},
+      UpdateExpression: "set #N = :name, dueDate = :dueDate, done = :done",
       ExpressionAttributeValues: {
         ":name": updatedItem.name,
         ":dueDate": updatedItem.dueDate,
@@ -65,24 +75,25 @@ export async function updateTodo(todoId: string, userId: string, updatedItem: Up
   }
   catch (err) {
     console.error(`Updating Todo:${todoId}`, err);
+    return {"error":err}
   }
 }
 
 export async function deleteTodo(todoId: string, userId: string) {
   
   try {
-    await docClient.delete({
+    return await docClient.delete({
       TableName: todosTable,
       Key: {
-        todoId: todoId,
-        userId: userId
+        "todoId": todoId,
+        "userId": userId
       }
     }).promise()
 
-    return {}
   }
   catch (err) {
     console.error(`Deleting Todo:${todoId}`, err);
+    return {"error":err}
   }
 }
 
@@ -101,10 +112,10 @@ export async function todoExists(todoId: string, userId: string) {
   return !!result.Item
 }
 
-export function createAttachmentPresignedUrl(imageId: string) {
+export function createAttachmentPresignedUrl(todoId: string) {
   return s3.getSignedUrl('putObject', {
     Bucket: bucketName,
-    Key: imageId,
-    Expires: urlExpiration
+    Key: todoId,
+    Expires: +urlExpiration
   })
 }

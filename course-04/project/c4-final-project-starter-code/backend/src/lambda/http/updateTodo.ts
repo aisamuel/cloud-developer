@@ -13,7 +13,7 @@ export const handler = middy(
     const todoId = event.pathParameters.todoId
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
     // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
-    const updatedItem = updateTodo(todoId, getUserId(event), updatedTodo)
+    updateTodo(todoId, getUserId(event), updatedTodo)
 
     return {
       statusCode: 200,
@@ -22,7 +22,7 @@ export const handler = middy(
         'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({
-        updatedItem
+        updatedTodo
       })
     } 
 })
