@@ -30,12 +30,17 @@ export async function getTodosForUser(userId: string) {
 
 
 export async function createTodo(newItem: CreateTodoPayload) {
-  await docClient.put({
-    TableName: todosTable,
-    Item: newItem
-  }).promise()
+  try {
+    await docClient.put({
+      TableName: todosTable,
+      Item: newItem
+    }).promise()
 
-  return newItem
+    return newItem
+  }
+  catch (err) {
+    console.error(`Creating Todo:`, err);
+  }
 }
 
 
