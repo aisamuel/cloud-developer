@@ -13,10 +13,10 @@ export const handler = middy(
     const parsedBody: CreateTodoRequest = JSON.parse(event.body)
     
     // TODO: Implement creating a new TODO item
-    const itemId = uuid.v4()
+    const todoId = uuid.v4()
     
     const payload = {
-      id: itemId,
+      todoid: todoId,
       userId: getUserId(event),
       done: false,
       ...parsedBody
